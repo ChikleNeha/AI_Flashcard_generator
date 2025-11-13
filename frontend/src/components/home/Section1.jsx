@@ -3,7 +3,7 @@ import React from 'react'
 
 const Section1 = () => {
   return (
-    <div className='m-4'>
+    <div className='my-10'>
         <h2 className='capitalize text-4xl font-bold text-dark-pink font-poppins text-center m-6'>How it works</h2>
         <div className='flex justify-between'>
             <div className='flex flex-col items-center gap-4'>

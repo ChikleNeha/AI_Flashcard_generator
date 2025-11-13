@@ -4,7 +4,7 @@ import '../App.css'
 
 const Nav = () => {
   return (
-    <div className='bg-dark-pink h-dvh p-6 text-white flex flex-col gap-6'>
+    <div className='bg-dark-pink h-dvh p-6 text-white flex flex-col gap-6 fixed'>
         <Link to='/' className=''><p>Home</p></Link>
         <Link to='/upload'><p>Upload</p></Link>
         <Link to='/review'><p>Review</p></Link>
