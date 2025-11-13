@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dark-pink: #450920;
+  --color-tertiary-pink : #A53860;
+  --color-secondary-pink: #da627d;
+  --color-primary-pink: #ffa5ab;
+  --color-creame: #f9dbbd;
+  --color-secondary-black: #121212;
+
+  --font-tektur: "Tektur", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+}
