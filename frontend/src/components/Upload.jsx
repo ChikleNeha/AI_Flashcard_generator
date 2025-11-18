@@ -1,119 +1,86 @@
-import { UploadIcon } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import bg_full from "../assets/bg-full.png"
 
 export default function Upload() {
-  const [dragActive, setDragActive] = useState(false);
-  const [file, setFile] = useState(null);
-  const inputRef = useRef(null);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleDrag = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
-    else if (e.type === "dragleave") setDragActive(false);
-  };
+    setError("");
+    setLoading(true);
 
-  const handleDrop = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setFile(e.dataTransfer.files[0]);
+    const deck_title = e.target.flashcardSetName.value.trim();
+    const study_material = e.target.textData.value.trim();
+    const email = e.target.email.value.trim();
+
+    if (!deck_title || !study_material || !email) {
+      setError("Please fill all fields.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/flashcards/generate_flashcards",
+        null,
+        {
+          params: { email, deck_title, study_material },
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+
+      const flashcards = response.data;
+
+      if (!Array.isArray(flashcards) || !flashcards.length) {
+        throw new Error("No flashcards returned");
+      }
+
+      localStorage.setItem("flashcards", JSON.stringify(flashcards));
+      window.location.href = "/review";
+    } catch (err) {
+      setError(err.response?.data?.detail || err.message || "Failed to generate flashcards");
+    } finally {
+      setLoading(false);
     }
   };
-
-  const handleChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
-
-  const triggerFileInput = () => inputRef.current.click();
 
   return (
-    <div className="mx-auto mt-4 p-6 rounded-lg ">
-      <h2 className="text-2xl font-semibold mb-6">Upload Material</h2>
-      <form className="grid gap-6">
-        <div className="grid gap-2">
-          <label className="font-medium" htmlFor="description">
-            Description <span className="text-gray-400">(Optional)</span>
-          </label>
-          <input
-            type="text"
-            id="description"
-            name="description"
-            className="border rounded px-30 py-2"
-            placeholder="Enter description (optional)"
-          />
-        </div>
-        <div className="grid gap-2">
-          <label className="font-medium" htmlFor="flashcardSetName">
-            Flashcard Set Name
-          </label>
-          <input
-            type="text"
-            id="flashcardSetName"
-            name="flashcardSetName"
-            className="border rounded px-3 py-2"
-            placeholder="Enter set name"
-          />
-        </div>
-
-        {/* Drag & Drop File Upload */}
-        <div
-          onDragEnter={handleDrag}
-          onDragOver={handleDrag}
-          onDragLeave={handleDrag}
-          onDrop={handleDrop}
-          className={`flex flex-col items-center justify-center h-32 border-2 border-dashed ${
-            dragActive ? "border-indigo-600 bg-indigo-50" : "border-gray-300"
-          } rounded-md transition cursor-pointer`}
-          onClick={triggerFileInput}
-        >
-          <input
-            ref={inputRef}
-            type="file"
-            id="material"
-            name="material"
-            className="hidden"
-            onChange={handleChange}
-          />
-          <UploadIcon className="text-gray-800"/>
-          <span className="text-gray-600 text-center">
-            {file ? (
-              <>
-                File selected: <span className="font-medium">{file.name}</span>
-              </>
-            ) : (
-              <>
-                Drag & drop or{" "}
-                <span className="text-indigo-600 underline">browse</span> to upload
-              </>
-            )}
-          </span>
-        </div>
-
-        {/* Optional Text Data Entry */}
-        <div className="grid gap-2">
-          <label className="font-medium" htmlFor="textData">
-            Or enter data as text (optional)
-          </label>
-          <textarea
-            id="textData"
-            name="textData"
-            rows={5}
-            className="border rounded px-3 py-2 resize-none"
-            placeholder="Paste or type text data here"
-          />
-        </div>
-
+    <div className="max-w-4xl mx-auto mt-8 p-6 bg-transparent rounded  z-10">
+      {/* <img src={bg_full} alt="bg 1" className='inset-0 z-0 max-w-2xl fixed mx-auto'/> */}
+      <h2 className="text-2xl font-semibold mb-5 text-center">Generate Flashcards</h2>
+      <form onSubmit={handleSubmit} className="grid gap-4 z-10">
+        <input
+          name="email"
+          type="email"
+          placeholder="Your Email"
+          className="border rounded px-22 py-2"
+          required
+        />
+        <input
+          name="flashcardSetName"
+          type="text"
+          placeholder="Flashcard Set Name"
+          className="border rounded px-3 py-2"
+          required
+        />
+        <textarea
+          name="textData"
+          rows={6}
+          placeholder="Paste study material here"
+          className="border rounded px-3 py-2 resize-none"
+          required
+        />
         <button
           type="submit"
-          className="bg-indigo-600 text-white py-2 rounded shadow hover:bg-indigo-700"
+          disabled={loading}
+          className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
         >
-          Submit
+          {loading ? "Generating…" : "Generate Flashcards"}
         </button>
       </form>
+      {error && <div className="mt-4 text-red-600 text-center">{error}</div>}
     </div>
   );
 }

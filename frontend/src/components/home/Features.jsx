@@ -3,7 +3,7 @@ import { BookOpenCheck, FileStack, FolderUp, SquareAsterisk } from 'lucide-react
 
 const Features = () => {
   return (
-    <div className='my-10'>
+    <div className='my-10 relative z-10 '>
         <h2 className='capitalize text-4xl font-bold text-dark-pink font-poppins text-center m-6'>Features</h2>
         <div className='grid grid-cols-2 gap-6 text-center'>
             <div className='flex flex-col items-center '>

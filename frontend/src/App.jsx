@@ -8,6 +8,8 @@ import Dashboard from './components/Dashboard'
 import Profile from './components/Profile'
 import Layout from './components/Layout'
 import './App.css'
+import SignUp from './components/SignUp'
+import Login from './components/Login'
 
 const App = () => {
   return (
@@ -20,6 +22,8 @@ const App = () => {
           <Route path='/practice' element={<Practice />} />
           <Route path='/dashboard' element={<Dashboard />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='/signup' element={<SignUp />} />
+          <Route path='/login' element={<Login />} />
         </Route>
       </Routes>
     </BrowserRouter>
