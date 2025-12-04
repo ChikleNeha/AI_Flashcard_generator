@@ -1,11 +1,15 @@
 from sqlalchemy.orm import Session
-from . import models
+import models
 
 def get_user_by_email(db: Session, email: str):
     return db.query(models.User).filter(models.User.email == email).first()
 
-def create_user(db: Session, email: str, hashed_password: str):
-    user = models.User(email=email, hashed_password=hashed_password)
+def create_user(db: Session, email: str, hashed_password: str, profile_pic_filename: str = None):
+    user = models.User(
+        email=email,
+        hashed_password=hashed_password,
+        profile_pic_filename=profile_pic_filename  # New field
+    )
     db.add(user)
     db.commit()
     db.refresh(user)

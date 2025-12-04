@@ -3,8 +3,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from database import init_db
-from routes import user_routes, flashcard_routes
+from routes import user_routes, flashcard_routes, deck_routes
 from ollama_client import get_ollama_llm  # Import the proper function
+from fastapi.staticfiles import StaticFiles
+
+
+
 
 # Placeholder for your Ollama LLM model instance
 llm_model = None
@@ -36,6 +40,8 @@ app.add_middleware(
 app.include_router(user_routes.router, prefix="/users", tags=["users"])
 app.include_router(flashcard_routes.router, prefix="/flashcards", tags=["flashcards"])
 # app.include_router(profile_router)
+app.include_router(deck_routes.router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def root():

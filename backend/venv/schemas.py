@@ -15,5 +15,11 @@ class FlashcardOut(BaseModel):
     question: str
     answer: str
 
+class FlashcardRequest(BaseModel):
+    email: EmailStr
+    deck_title: str
+    study_material: str
+
+
     class Config:
         orm_mode = True

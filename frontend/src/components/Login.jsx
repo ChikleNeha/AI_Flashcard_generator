@@ -43,7 +43,7 @@ function Login({ onLoginSuccess }) {
           type="email"
           name="email"
           placeholder="Email"
-          className="border rounded px-3 py-2"
+          className="border rounded px-22 py-2"
           required
         />
         <input
@@ -82,7 +82,7 @@ export default function App() {
     <div className="max-w-lg mx-auto mt-8 p-6 bg-white rounded shadow text-center">
       <h1 className="text-3xl font-bold mb-6">Welcome, {userEmail}</h1>
       <p>You are logged in. You can now generate flashcards.</p>
-      <Link to='/upload'>Upload Page</Link>
+      <Link to='/upload' className="text-blue-500">Upload Page</Link>
     </div>
   );
 }

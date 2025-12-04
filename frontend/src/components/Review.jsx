@@ -7,7 +7,7 @@ export default function Review() {
 
   if (!flashcards.length) {
     return (
-      <div className="max-w-lg mx-auto mt-8 p-6 bg-white rounded shadow text-center">
+      <div className="max-w-lg mx-auto mt-8 p-6  rounded shadow text-center">
         No flashcards found. Please generate flashcards first.
       </div>
     );
@@ -16,7 +16,7 @@ export default function Review() {
   const card = flashcards[currentIndex];
 
   return (
-    <div className="max-w-lg mx-auto mt-8 p-6 bg-white rounded shadow">
+    <div className="max-w-4xl mx-auto mt-8 p-6 rounded shadow">
       <h2 className="text-2xl font-semibold mb-5 text-center">Review Flashcards</h2>
       <div className="flex items-center justify-between mb-6">
         <button
@@ -41,19 +41,28 @@ export default function Review() {
           Next &gt;
         </button>
       </div>
-      <div className="border rounded p-4 min-h-[100px] mb-4">
-        <div className="text-lg font-semibold mb-3">Q: {card.question}</div>
-        {showAnswer ? (
-          <div className="text-green-700 font-semibold">A: {card.answer}</div>
-        ) : (
-          <button
-            className="bg-indigo-600 text-white px-4 py-2 rounded"
-            onClick={() => setShowAnswer(true)}
-          >
-            Show Answer
-          </button>
-        )}
+
+      <div className="relative w-md h-60 perspective mb-4">
+        <div className={`relative w-full h-full duration-700 transform-style-preserve-3d ${showAnswer ? "rotate-y-180" : ""}`}>
+          {/* Front side */}
+          <div className="absolute w-full h-full backface-hidden  rounded p-4 flex items-center justify-center text-lg font-semibold">
+            Q: {card.question}
+          </div>
+          {/* Back side */}
+          <div className="absolute w-full h-full backface-hidden bg-green-100 border border-gray-300 rounded p-4 flex items-center justify-center text-lg font-semibold text-green-700 rotate-y-180">
+            A: {card.answer}
+          </div>
+        </div>
       </div>
+
+      {!showAnswer && (
+        <button
+          className="bg-indigo-600 text-white px-4 py-2 rounded w-full"
+          onClick={() => setShowAnswer(true)}
+        >
+          Show Answer
+        </button>
+      )}
     </div>
   );
 }

@@ -1,4 +1,87 @@
+// import React, { useState } from "react";
+// import { Link } from "react-router-dom";
+
+// export default function SignUp() {
+//   const [error, setError] = useState("");
+//   const [success, setSuccess] = useState("");
+
+//   const handleSignup = async (e) => {
+//     e.preventDefault();
+//     setError("");
+//     setSuccess("");
+
+//     const email = e.target.email.value.trim();
+//     const password = e.target.password.value;
+//     const confirmPassword = e.target.confirmPassword.value;
+
+//     if (!email || !password || !confirmPassword) {
+//       setError("All fields are required.");
+//       return;
+//     }
+//     if (password !== confirmPassword) {
+//       setError("Passwords do not match.");
+//       return;
+//     }
+
+//     try {
+//       const response = await fetch("http://127.0.0.1:8000/users/signup", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ email, password }),
+//       });
+//       if (!response.ok) {
+//         const data = await response.json();
+//         throw new Error(data.detail || "Signup failed");
+//       }
+//       setSuccess("User registered successfully! Please login.");
+//     } catch (err) {
+//       setError(err.message);
+//     }
+//   };
+
+//   return (
+//     <div className="max-w-md mx-auto mt-8 p-6 bg-white rounded shadow">
+//       <h2 className="text-2xl font-semibold mb-5 text-center">Sign Up</h2>
+//       <form onSubmit={handleSignup} className="grid gap-4">
+//         <input
+//           type="email"
+//           name="email"
+//           placeholder="Email"
+//           className="border rounded px-22 py-2"
+//           required
+//         />
+//         <input
+//           type="password"
+//           name="password"
+//           placeholder="Password"
+//           className="border rounded px-3 py-2"
+//           required
+//         />
+//         <input
+//           type="password"
+//           name="confirmPassword"
+//           placeholder="Confirm Password"
+//           className="border rounded px-3 py-2"
+//           required
+//         />
+//         <button
+//           type="submit"
+//           className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+//         >
+//           Sign Up
+//         </button>
+//       </form>
+//       {error && <div className="mt-4 text-red-600 text-center">{error}</div>}
+//       {success && <div className="mt-4 text-green-600 text-center">{success} 
+//        <Link to='/login'> <p className="text-blue-500">click here to login</p></Link>
+//         </div>}
+//     </div>
+//   );
+// }
+
+
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function SignUp() {
   const [error, setError] = useState("");
@@ -12,6 +95,7 @@ export default function SignUp() {
     const email = e.target.email.value.trim();
     const password = e.target.password.value;
     const confirmPassword = e.target.confirmPassword.value;
+    const file = e.target.profilePicture.files[0];
 
     if (!email || !password || !confirmPassword) {
       setError("All fields are required.");
@@ -22,16 +106,27 @@ export default function SignUp() {
       return;
     }
 
+    if (!file) {
+      setError("Please upload a profile picture.");
+      return;
+    }
+
     try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      formData.append("profile_picture", file);
+
       const response = await fetch("http://127.0.0.1:8000/users/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: formData, // multipart/form-data automatically set by browser
       });
+
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.detail || "Signup failed");
       }
+
       setSuccess("User registered successfully! Please login.");
     } catch (err) {
       setError(err.message);
@@ -46,7 +141,7 @@ export default function SignUp() {
           type="email"
           name="email"
           placeholder="Email"
-          className="border rounded px-3 py-2"
+          className="border rounded px-22 py-2"
           required
         />
         <input
@@ -63,6 +158,13 @@ export default function SignUp() {
           className="border rounded px-3 py-2"
           required
         />
+        <input
+          type="file"
+          name="profilePicture"
+          accept="image/*"
+          className="border rounded px-3 py-2"
+          required
+        />
         <button
           type="submit"
           className="bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
@@ -71,7 +173,15 @@ export default function SignUp() {
         </button>
       </form>
       {error && <div className="mt-4 text-red-600 text-center">{error}</div>}
-      {success && <div className="mt-4 text-green-600 text-center">{success}</div>}
+      {success && (
+        <div className="mt-4 text-green-600 text-center">
+          {success}
+          <Link to="/login">
+            <p className="text-blue-500">click here to login</p>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
+

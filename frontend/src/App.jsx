@@ -10,6 +10,7 @@ import Layout from './components/Layout'
 import './App.css'
 import SignUp from './components/SignUp'
 import Login from './components/Login'
+import DeckFlashcards from './components/DeckFlashcards'
 
 const App = () => {
   return (
@@ -24,6 +25,7 @@ const App = () => {
           <Route path='/profile' element={<Profile />} />
           <Route path='/signup' element={<SignUp />} />
           <Route path='/login' element={<Login />} />
+          <Route path="/deck/:deckId" element={<DeckFlashcards />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import bg_full from "../assets/bg-full.png"
 
 export default function Upload() {
   const [error, setError] = useState("");
@@ -11,25 +10,54 @@ export default function Upload() {
     setError("");
     setLoading(true);
 
+    const email = e.target.email.value.trim();
     const deck_title = e.target.flashcardSetName.value.trim();
     const study_material = e.target.textData.value.trim();
-    const email = e.target.email.value.trim();
+    const file = e.target.file?.files[0];
 
-    if (!deck_title || !study_material || !email) {
+    if (!email || !deck_title) {
       setError("Please fill all fields.");
       setLoading(false);
       return;
     }
 
+    // Require either text OR file
+    if (!study_material && !file) {
+      setError("Paste some text or upload a file.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/flashcards/generate_flashcards",
-        null,
-        {
-          params: { email, deck_title, study_material },
-          headers: { "Content-Type": "application/json" }
-        }
-      );
+      let response;
+
+      if (file) {
+        // Send file via FormData
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("email", email);
+        formData.append("deck_title", deck_title);
+
+        response = await axios.post(
+          "http://127.0.0.1:8000/flashcards/generate_from_file",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+      } else {
+        // Existing text-based flow
+        response = await axios.post(
+          "http://127.0.0.1:8000/flashcards/generate_flashcards",
+          null,
+          {
+            params: { email, deck_title, study_material },
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
 
       const flashcards = response.data;
 
@@ -40,22 +68,27 @@ export default function Upload() {
       localStorage.setItem("flashcards", JSON.stringify(flashcards));
       window.location.href = "/review";
     } catch (err) {
-      setError(err.response?.data?.detail || err.message || "Failed to generate flashcards");
+      setError(
+        err.response?.data?.detail ||
+          err.message ||
+          "Failed to generate flashcards"
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto mt-8 p-6 bg-transparent rounded  z-10">
-      {/* <img src={bg_full} alt="bg 1" className='inset-0 z-0 max-w-2xl fixed mx-auto'/> */}
-      <h2 className="text-2xl font-semibold mb-5 text-center">Generate Flashcards</h2>
+    <div className="max-w-4xl mx-auto mt-8 p-6 bg-transparent rounded z-10">
+      <h2 className="text-2xl font-semibold mb-5 text-center">
+        Generate Flashcards
+      </h2>
       <form onSubmit={handleSubmit} className="grid gap-4 z-10">
         <input
           name="email"
           type="email"
           placeholder="Your Email"
-          className="border rounded px-22 py-2"
+          className="border rounded px-3 py-2"
           required
         />
         <input
@@ -68,10 +101,16 @@ export default function Upload() {
         <textarea
           name="textData"
           rows={6}
-          placeholder="Paste study material here"
+          placeholder="Paste study material here (or upload a file below)"
           className="border rounded px-3 py-2 resize-none"
-          required
         />
+        <input
+          name="file"
+          type="file"
+          accept=".pdf,.docx,.txt,.xlsx"
+          className="border rounded px-3 py-2"
+        />
+
         <button
           type="submit"
           disabled={loading}

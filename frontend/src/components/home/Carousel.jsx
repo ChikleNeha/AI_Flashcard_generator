@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
 const slides = [
-  { text: 'Card 1', gradient: 'from-blue-400 via-purple-400 to-pink-400' },
-  { text: 'Card 2', gradient: 'from-indigo-400 via-pink-400 to-purple-400' },
-  { text: 'Card 3', gradient: 'from-pink-300 via-indigo-300 to-blue-200' },
-  { text: 'Card 4', gradient: 'from-purple-500 via-blue-500 to-pink-400' },
-  { text: 'Card 5', gradient: 'from-purple-300 via-pink-300 to-indigo-300' },
+  { text: 'How do you create a database session dependency in FastAPI using SQLAlchemy?', gradient: 'from-blue-400 via-purple-400 to-pink-400' },
+  { text: 'What steps occur in a FastAPI POST endpoint to create and return a new SQLAlchemy model instance?', gradient: 'from-indigo-400 via-pink-400 to-purple-400' },
+  { text: 'How do you define a basic SQLAlchemy model class for a User table?', gradient: 'from-pink-300 via-indigo-300 to-blue-200' },
+  { text: 'How do you handle dependency injection for database sessions in FastAPI with SQLAlchemy?', gradient: 'from-purple-500 via-blue-500 to-pink-400' },
+  { text: 'What is the purpose of db.refresh(instance) after committing a new SQLAlchemy object in FastAPI?', gradient: 'from-purple-300 via-pink-300 to-indigo-300' },
 ];
 
 const Carousel = () => {
@@ -31,7 +31,7 @@ const Carousel = () => {
         <div
           className={`absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[220px] h-[320px]
           rounded-2xl bg-gradient-to-br ${slides[current].gradient} border-4 border-purple-400 shadow-2xl z-30
-          flex items-center justify-center text-white text-2xl font-bold transition-all duration-1000 ease-[cubic-bezier(0.77,0,0.175,1)]`}
+          flex items-center justify-center text-white text-md text-center px-2 font-bold transition-all duration-1000 ease-[cubic-bezier(0.77,0,0.175,1)]`}
         >
           {slides[current].text}
         </div>
